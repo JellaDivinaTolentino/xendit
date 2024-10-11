@@ -1,0 +1,11 @@
+{
+    "type": "module",
+    "dependencies": {
+        "@fastify/cors": "^8.5.0",
+        "axios": "^1.7.7",
+        "dotenv": "^16.4.5",
+        "fastify": "^4.28.1",
+        "nodemon": "^3.1.4",
+        "xendit-node": "^6.0.0"
+    }
+}
