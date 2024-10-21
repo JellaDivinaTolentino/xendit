@@ -1,7 +1,7 @@
-import Image from "next/image";
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { api } from "../../services/api";
+import { config } from "../../services/config/config.js";
 
 export default function Home() {
     const [methods] = useState(["Credit Card", "GCash"]);
@@ -94,8 +94,8 @@ export default function Home() {
             title: form.title,
             description: form.description,
             image: form.image,
-            successReturnUrl: "https://redirect.me/success",
-            failureReturnUrl: "https://redirect.me/fail",
+            successReturnUrl: config.successReturnUrl,
+            failureReturnUrl: config.failureReturnUrl,
         };
 
         let finalRequest = {};
@@ -180,10 +180,9 @@ export default function Home() {
                                         <img
                                             width="40"
                                             class="inline mr-2"
-                                            src={`/assets/images/${m.replace(
-                                                / /g,
-                                                "-"
-                                            )}-icon.png`}
+                                            src={`/assets/images/${m
+                                                .replace(/ /g, "-")
+                                                .toLowerCase()}-icon.png`}
                                         />
                                         {m}
                                     </div>
