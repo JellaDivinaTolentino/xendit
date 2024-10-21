@@ -180,10 +180,9 @@ export default function Home() {
                                         <img
                                             width="40"
                                             class="inline mr-2"
-                                            src={`/assets/images/${m.replace(
-                                                / /g,
-                                                "-"
-                                            )}-icon.png`}
+                                            src={`/assets/images/${m
+                                                .replace(/ /g, "-")
+                                                .toLowerCase()}-icon.png`}
                                         />
                                         {m}
                                     </div>
