@@ -14,6 +14,7 @@ export default function Home() {
         amount: 0,
         firstName: "",
         lastName: "",
+        email: "",
         title: "",
         description: "",
         image: "",
@@ -32,6 +33,7 @@ export default function Home() {
         const amount = searchParams.get("amount");
         const firstName = searchParams.get("firstName");
         const lastName = searchParams.get("lastName");
+        const email = searchParams.get("email");
         const skuId = searchParams.get("skuId");
         const referenceId = searchParams.get("referenceId");
         const customerId = searchParams.get("customerId");
@@ -48,6 +50,9 @@ export default function Home() {
         }
         if (lastName) {
             cForm.lastName = lastName;
+        }
+        if (email) {
+            cForm.email = email;
         }
         if (skuId) {
             cForm.skuId = skuId;
@@ -84,6 +89,7 @@ export default function Home() {
             customerId: form.customerId,
             firstName: form.firstName,
             lastName: form.lastName,
+            email: form.email,
             amount: form.amount,
             title: form.title,
             description: form.description,
@@ -137,8 +143,8 @@ export default function Home() {
 
     return (
         <div className="p-4">
-            <div className="grid grid-cols-2 gap-2 mt-5 divide-x">
-                <div className="p-10">
+            <div className="grid xl:grid-cols-2 lg:grid-cols-2 md:grid-cols-2 sm:grid-cols-1 gap-2 mt-5 xl:divide-x lg:divide-x md:divide-x">
+                <div className="xl:p-10 lg:p-10 md:p-10 sm:p-12">
                     <img width="120" src={`/assets/images/serye-fm-logo.png`} />
                     <label className="block mt-5">{form.title}</label>
                     <label className="text-3xl">{form.amount}</label>
@@ -150,10 +156,10 @@ export default function Home() {
                         src={form.image}
                     />
                 </div>
-                <div className="p-10">
+                <div className="xl:p-10 lg:p-10 md:p-10 sm:p-12">
                     <div className="flex flex-col justify-center">
                         {!showForm ? (
-                            <div className="flex flex-col gap-2 mb-8">
+                            <div className="flex flex-col gap-2 mb-8 sm:mt-10">
                                 <label className="block">
                                     {form.firstName} {form.lastName}
                                 </label>
@@ -171,16 +177,40 @@ export default function Home() {
                                         } hover:text-black cursor-pointer `}
                                         onClick={() => handleSelectMethod(m)}
                                     >
+                                        <img
+                                            width="40"
+                                            class="inline mr-2"
+                                            src={`/assets/images/${m.replace(
+                                                / /g,
+                                                "-"
+                                            )}-icon.png`}
+                                        />
                                         {m}
                                     </div>
                                 ))}
                             </div>
                         ) : (
-                            <div className="flex flex-col gap-2 mb-8">
+                            <div className="flex flex-col gap-2 mb-8 sm:mt-10">
                                 <label className="block">
                                     {form.firstName} {form.lastName}
                                 </label>
                                 <hr className="mt-5 mb-5" />
+                                <div class="grid grid-cols-1 gap-2">
+                                    <div>
+                                        <label className="block">Email</label>
+                                        <input
+                                            type="text"
+                                            value={form.email}
+                                            className="rounded border-2 p-2 w-full"
+                                            onChange={(e) =>
+                                                setForm({
+                                                    ...form,
+                                                    email: e.target.value,
+                                                })
+                                            }
+                                        />
+                                    </div>
+                                </div>
                                 <div class="grid grid-cols-2 gap-2">
                                     <div>
                                         <label className="block">

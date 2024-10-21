@@ -49,6 +49,7 @@ const paymentRequest = (fastify, opts, next) => {
                     customerId: { type: "string" },
                     firstName: { type: "string" },
                     lastName: { type: "string" },
+                    email: { type: "string" },
                     amount: { type: "number" },
                     description: { type: "string" },
                     items: { type: "array" },
@@ -61,6 +62,7 @@ const paymentRequest = (fastify, opts, next) => {
                     "customerId",
                     "firstName",
                     "lastName",
+                    "email",
                     "amount",
                     "successReturnUrl",
                     "failureReturnUrl",
@@ -80,6 +82,7 @@ const paymentRequest = (fastify, opts, next) => {
                 firstName,
                 lastName,
                 amount,
+                email,
                 description = "",
                 items = [],
                 successReturnUrl,
@@ -100,6 +103,7 @@ const paymentRequest = (fastify, opts, next) => {
                                 customerId,
                                 firstName,
                                 lastName,
+                                email,
                             },
                         },
                         paymentMethod: {
@@ -133,6 +137,7 @@ const paymentRequest = (fastify, opts, next) => {
                     skuId: { type: "string" },
                     referenceId: { type: "string" },
                     customerId: { type: "string" },
+                    email: { type: "string" },
                     amount: { type: "number" },
                     description: { type: "string" },
                     items: { type: "array" },
@@ -150,6 +155,7 @@ const paymentRequest = (fastify, opts, next) => {
                     "skuId",
                     "referenceId",
                     "customerId",
+                    "email",
                     "amount",
                     "cardNumber",
                     "expiryMonth",
@@ -171,6 +177,7 @@ const paymentRequest = (fastify, opts, next) => {
                 skuId,
                 referenceId,
                 customerId,
+                email,
                 cardNumber,
                 expiryMonth,
                 expiryYear,
@@ -187,6 +194,7 @@ const paymentRequest = (fastify, opts, next) => {
                 let response = await paymentRequestController.createCardCharge({
                     currency: "PHP",
                     amount,
+                    referenceId,
                     paymentMethod: {
                         type: "CARD",
                         card: {
@@ -212,6 +220,7 @@ const paymentRequest = (fastify, opts, next) => {
                         customer: {
                             customerId,
                             cardholderName,
+                            email,
                         },
                     },
                     items,
