@@ -7,6 +7,7 @@ export default function Home() {
     const [methods] = useState(["Credit Card", "GCash"]);
     const [selectedMethod, setSelectedMethod] = useState(null);
     const [showForm, setShowForm] = useState(false);
+    const [showError, setError] = useState("");
     const [form, setForm] = useState({
         skuId: "",
         referenceId: "",
@@ -77,8 +78,13 @@ export default function Home() {
     }, [searchParams]);
 
     function handleSelectMethod(m) {
+        setError("");
         if (isLoading) return;
         setSelectedMethod(m);
+    }
+
+    function closeError() {
+        setError("");
     }
 
     async function handleSubmit() {
@@ -120,17 +126,26 @@ export default function Home() {
             default:
                 break;
         }
-        const response = await api.payment.generatePayment(finalRequest);
+        try {
+            const response = await api.payment.generatePayment(finalRequest);
 
-        console.log({ response });
+            console.log({ response });
 
-        if (response?.status === 200) {
-            const actions = response?.data?.actions;
+            if (response?.status === 200) {
+                if (response?.data?.status === 400) {
+                    setError(response?.data?.errorMessage);
+                    setLoading(false);
+                } else {
+                    const actions = response?.data?.actions;
 
-            const action = actions.find((f) => f.urlType === "WEB");
-            if (action) {
-                window.location = action?.url;
+                    const action = actions.find((f) => f.urlType === "WEB");
+                    if (action) {
+                        window.location = action?.url;
+                    }
+                }
             }
+        } catch (e) {
+            return e;
         }
 
         setLoading(false);
@@ -143,11 +158,49 @@ export default function Home() {
 
     return (
         <div className="p-4">
+            {isLoading ? (
+                <div className="w-full h-full absolute top-0 left-0 bg-gray-700/70 text-center">
+                    <img
+                        width="250"
+                        className="block text-center ml-auto mr-auto mt-64"
+                        src={`/assets/images/loading.gif`}
+                    />
+                    <button
+                        type="button"
+                        className="text-white text-xl mt-2"
+                        disabled
+                    >
+                        <svg
+                            className="animate-spin h-5 w-5 text-white inline mr-2 align-text-bottom"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                        >
+                            <circle
+                                className="opacity-25"
+                                cx="12"
+                                cy="12"
+                                r="10"
+                                stroke="currentColor"
+                                width="4"
+                            ></circle>
+                            <path
+                                className="opacity-75"
+                                fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            ></path>
+                        </svg>
+                        Processing...
+                    </button>
+                </div>
+            ) : (
+                ""
+            )}
             <div className="grid xl:grid-cols-2 lg:grid-cols-2 md:grid-cols-2 sm:grid-cols-1 gap-2 mt-5 xl:divide-x lg:divide-x md:divide-x">
                 <div className="xl:p-10 lg:p-10 md:p-10 sm:p-12">
                     <img width="120" src={`/assets/images/serye-fm-logo.png`} />
                     <label className="block mt-5">{form.title}</label>
-                    <label className="text-3xl">{form.amount}</label>
+                    <label className="text-3xl">₱ {form.amount}</label>
                     <label className="block mt-5">{form.description}</label>
                     <img
                         width="200"
@@ -167,6 +220,38 @@ export default function Home() {
                                 <label className="block mb-3">
                                     Payment Method
                                 </label>
+                                {showError || showError != "" ? (
+                                    <div
+                                        className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative z-0"
+                                        role="alert"
+                                    >
+                                        <strong className="font-bold">
+                                            Error!
+                                        </strong>
+                                        <br />
+                                        <span className="block sm:inline">
+                                            {showError}
+                                        </span>
+                                        <span
+                                            className="absolute top-0 bottom-0 right-0 px-4 py-3 cursor-pointer"
+                                            onClick={() => closeError()}
+                                        >
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                width="1.5"
+                                                stroke="currentColor"
+                                                className="size-6"
+                                            >
+                                                <path d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                            </svg>
+                                        </span>
+                                    </div>
+                                ) : (
+                                    ""
+                                )}
+
                                 {methods.map((m, i) => (
                                     <div
                                         key={i}
@@ -179,7 +264,7 @@ export default function Home() {
                                     >
                                         <img
                                             width="40"
-                                            class="inline mr-2"
+                                            className="inline mr-2"
                                             src={`/assets/images/${m
                                                 .replace(/ /g, "-")
                                                 .toLowerCase()}-icon.png`}
@@ -194,7 +279,7 @@ export default function Home() {
                                     {form.firstName} {form.lastName}
                                 </label>
                                 <hr className="mt-5 mb-5" />
-                                <div class="grid grid-cols-1 gap-2">
+                                <div className="grid grid-cols-1 gap-2">
                                     <div>
                                         <label className="block">Email</label>
                                         <input
@@ -210,7 +295,7 @@ export default function Home() {
                                         />
                                     </div>
                                 </div>
-                                <div class="grid grid-cols-2 gap-2">
+                                <div className="grid grid-cols-2 gap-2">
                                     <div>
                                         <label className="block">
                                             Card Number
@@ -245,7 +330,7 @@ export default function Home() {
                                         />
                                     </div>
                                 </div>
-                                <div class="grid grid-cols-3 gap-2">
+                                <div className="grid grid-cols-3 gap-2">
                                     <div>
                                         <label className="block">
                                             Expiry Month

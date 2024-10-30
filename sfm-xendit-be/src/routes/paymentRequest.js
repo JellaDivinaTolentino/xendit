@@ -90,6 +90,20 @@ const paymentRequest = (fastify, opts, next) => {
             } = request.body;
 
             try {
+                if (amount <= 0) {
+                    return {
+                        status: 400,
+                        errorCode: "API_VALIDATION_ERROR",
+                        errorMessage:
+                            "Amount is required and must be greater than 0.",
+                    };
+                } else if (email == "") {
+                    return {
+                        status: 400,
+                        errorCode: "API_VALIDATION_ERROR",
+                        errorMessage: "Email is required.",
+                    };
+                }
                 let response =
                     await paymentRequestController.createEWalletCharge({
                         country: "PH",
@@ -122,6 +136,7 @@ const paymentRequest = (fastify, opts, next) => {
                 return response;
             } catch (e) {
                 console.log(e);
+                return e;
             }
             return { error: true };
         },
@@ -228,6 +243,7 @@ const paymentRequest = (fastify, opts, next) => {
                 return response;
             } catch (e) {
                 console.log(e);
+                return e;
             }
             return { error: true };
         },
