@@ -206,6 +206,50 @@ const paymentRequest = (fastify, opts, next) => {
             } = request.body;
 
             try {
+                if (amount <= 0) {
+                    return {
+                        status: 400,
+                        errorCode: "API_VALIDATION_ERROR",
+                        errorMessage:
+                            "Amount is required and must be greater than 0.",
+                    };
+                } else if (email == "") {
+                    return {
+                        status: 400,
+                        errorCode: "API_VALIDATION_ERROR",
+                        errorMessage: "Email is required.",
+                    };
+                } else if (cardNumber == "") {
+                    return {
+                        status: 400,
+                        errorCode: "API_VALIDATION_ERROR",
+                        errorMessage: "Card number is required.",
+                    };
+                } else if (cardholderName == "") {
+                    return {
+                        status: 400,
+                        errorCode: "API_VALIDATION_ERROR",
+                        errorMessage: "Card holder naame is required.",
+                    };
+                } else if (expiryMonth == "") {
+                    return {
+                        status: 400,
+                        errorCode: "API_VALIDATION_ERROR",
+                        errorMessage: "Expiry month is required.",
+                    };
+                } else if (expiryYear == "") {
+                    return {
+                        status: 400,
+                        errorCode: "API_VALIDATION_ERROR",
+                        errorMessage: "Expiry year is required.",
+                    };
+                } else if (cvv == "") {
+                    return {
+                        status: 400,
+                        errorCode: "API_VALIDATION_ERROR",
+                        errorMessage: "CVV is required.",
+                    };
+                }
                 let response = await paymentRequestController.createCardCharge({
                     currency: "PHP",
                     amount,
