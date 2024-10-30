@@ -279,6 +279,37 @@ export default function Home() {
                                     {form.firstName} {form.lastName}
                                 </label>
                                 <hr className="mt-5 mb-5" />
+                                {showError || showError != "" ? (
+                                    <div
+                                        className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative z-0"
+                                        role="alert"
+                                    >
+                                        <strong className="font-bold">
+                                            Error!
+                                        </strong>
+                                        <br />
+                                        <span className="block sm:inline">
+                                            {showError}
+                                        </span>
+                                        <span
+                                            className="absolute top-0 bottom-0 right-0 px-4 py-3 cursor-pointer"
+                                            onClick={() => closeError()}
+                                        >
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                width="1.5"
+                                                stroke="currentColor"
+                                                className="size-6"
+                                            >
+                                                <path d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                            </svg>
+                                        </span>
+                                    </div>
+                                ) : (
+                                    ""
+                                )}
                                 <div className="grid grid-cols-1 gap-2">
                                     <div>
                                         <label className="block">Email</label>
