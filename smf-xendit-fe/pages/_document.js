@@ -3,7 +3,7 @@ import { Html, Head, Main, NextScript } from "next/document";
 export default function Document() {
     return (
         <Html lang="en">
-            <link rel="icon" href="/assets/images/favicon.jpeg" />
+            <link rel="icon" href="/assets/images/favicon.png" />
             <Head />
             <meta
                 name="viewport"
