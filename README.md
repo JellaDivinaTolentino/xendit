@@ -1,13 +1,13 @@
 ## Getting Started
 
-**Nodejs installation:
+Nodejs installation:
 ---
 
 Follow the instruction in the link below:
 
 https://nodejs.org/en/download/package-manager
 
-**Run the development server:
+Run the development server:
 
 ```bash
 npm run dev
