@@ -296,7 +296,9 @@ export default function Home() {
                                                 .replace(/ /g, "-")
                                                 .toLowerCase()}-icon.png`}
                                         />
-                                        {m}
+                                        {m == "Credit Card"
+                                            ? "Credit/Debit Card"
+                                            : m}
                                     </div>
                                 ))}
                             </div>
