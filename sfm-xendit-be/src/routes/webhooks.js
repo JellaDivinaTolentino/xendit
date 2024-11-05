@@ -29,6 +29,8 @@ const webhook = (fastify, opts, next) => {
                         return { msg: "Payment Completed" };
                     case "payment.succeeded":
                         return { msg: "Payment succeeded" };
+                    case "capture.succeeded":
+                        return { msg: "Capture succeeded" };
                     case "payment.failed":
                         return { msg: "Payment failed" };
                     case "payment_session.expired":

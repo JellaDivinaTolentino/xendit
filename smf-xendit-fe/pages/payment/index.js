@@ -88,6 +88,7 @@ export default function Home() {
     }
 
     async function handleSubmit() {
+        setError("");
         setLoading(true);
         const request = {
             skuId: form.skuId,
@@ -115,10 +116,10 @@ export default function Home() {
                 finalRequest = {
                     ...request,
                     type: "card",
-                    cardNumber: form.cardNumber,
+                    cardNumber: form.cardNumber.replace(/\s/g, ""),
                     cardholderName: form.cardholderName,
                     expiryMonth: form.expiryMonth,
-                    expiryYear: form.expiryYear,
+                    expiryYear: 20 + String(form.expiryYear),
                     cvv: form.cvv,
                 };
                 break;
@@ -132,9 +133,14 @@ export default function Home() {
             console.log({ response });
 
             if (response?.status === 200) {
-                if (response?.data?.status === 400) {
+                setLoading(false);
+                if (
+                    response?.data?.status === 400 ||
+                    response?.data?.status === 500
+                ) {
                     setError(response?.data?.errorMessage);
-                    setLoading(false);
+                } else if (response?.data?.error_code) {
+                    setError(response?.data?.message);
                 } else {
                     const actions = response?.data?.actions;
 
@@ -145,10 +151,12 @@ export default function Home() {
                 }
             }
         } catch (e) {
+            setLoading(false);
+            setError(e?.response?.data?.message);
             return e;
         }
 
-        setLoading(false);
+        // setLoading(false);
         // Submit
     }
 
@@ -156,10 +164,27 @@ export default function Home() {
         setShowForm(true);
     }
 
+    function formatCardNumber(input) {
+        let value = input.target.value.replace(/\D/g, "");
+        input.target.value = value.replace(/(\d{4})(?=\d)/g, "$1 ");
+    }
+
+    function restrictMonthInput(input) {
+        input.target.value = input.target.value.replace(/\D/g, "");
+        if (input.target.value > 12) {
+            input.target.value = "12";
+        }
+    }
+
+    function restrictYearInput(input) {
+        // Remove any non-digit characters
+        input.target.value = input.target.value.replace(/\D/g, "");
+    }
+
     return (
         <div className="p-4">
             {isLoading ? (
-                <div className="w-full h-full absolute top-0 left-0 bg-gray-700/70 text-center">
+                <div className="w-full h-full absolute top-0 left-0 bg-gray-700/70 text-center z-9">
                     <img
                         width="250"
                         className="block text-center ml-auto mr-auto mt-64"
@@ -200,7 +225,9 @@ export default function Home() {
                 <div className="xl:p-10 lg:p-10 md:p-10 sm:p-12">
                     <img width="120" src={`/assets/images/serye-fm-logo.png`} />
                     <label className="block mt-5">{form.title}</label>
-                    <label className="text-3xl">₱ {form.amount}</label>
+                    <label className="text-3xl">
+                        ₱ {parseFloat(form.amount).toFixed(2)}
+                    </label>
                     <label className="block mt-5">{form.description}</label>
                     <img
                         width="200"
@@ -222,7 +249,7 @@ export default function Home() {
                                 </label>
                                 {showError || showError != "" ? (
                                     <div
-                                        className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative z-0"
+                                        className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative z-0 capitalize"
                                         role="alert"
                                     >
                                         <strong className="font-bold">
@@ -269,7 +296,9 @@ export default function Home() {
                                                 .replace(/ /g, "-")
                                                 .toLowerCase()}-icon.png`}
                                         />
-                                        {m}
+                                        {m == "Credit Card"
+                                            ? "Credit/Debit Card"
+                                            : m}
                                     </div>
                                 ))}
                             </div>
@@ -335,6 +364,9 @@ export default function Home() {
                                             type="text"
                                             value={form.cardNumber}
                                             className="rounded border-2 p-2 w-full"
+                                            maxLength="19"
+                                            placeholder="xxxx xxxx xxxx xxxx"
+                                            onInput={(e) => formatCardNumber(e)}
                                             onChange={(e) =>
                                                 setForm({
                                                     ...form,
@@ -367,11 +399,14 @@ export default function Home() {
                                             Expiry Month
                                         </label>
                                         <input
-                                            type="number"
+                                            type="text"
                                             value={form.expiryMonth}
-                                            min="1"
-                                            max="12"
+                                            maxLength="2"
                                             className="rounded border-2 p-2 w-full"
+                                            placeholder="MM"
+                                            onInput={(e) =>
+                                                restrictMonthInput(e)
+                                            }
                                             onChange={(e) =>
                                                 setForm({
                                                     ...form,
@@ -386,8 +421,13 @@ export default function Home() {
                                         </label>
                                         <input
                                             type="text"
+                                            placeholder="YY"
                                             value={form.expiryYear}
+                                            maxLength="2"
                                             className="rounded border-2 p-2 w-full"
+                                            onInput={(e) =>
+                                                restrictYearInput(e)
+                                            }
                                             onChange={(e) =>
                                                 setForm({
                                                     ...form,
