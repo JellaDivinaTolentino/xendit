@@ -34,12 +34,12 @@ const paymentRequestController = {
                 data,
             });
 
-            console.log("Success creating Payment reques:", response);
+            // console.log("Success creating Payment reques:", response);
 
             return response;
-        } catch (e) {
+        } catch (error) {
             console.error("Error creating payment request charge:", e);
-            return e;
+            return error?.response;
         }
     },
 
@@ -55,7 +55,7 @@ const paymentRequestController = {
             return response;
         } catch (error) {
             console.error("Error creating payment methods:", error);
-            return error;
+            return error?.response;
         }
     },
 

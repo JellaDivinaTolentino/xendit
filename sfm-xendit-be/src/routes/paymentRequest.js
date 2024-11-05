@@ -50,7 +50,7 @@ const paymentRequest = (fastify, opts, next) => {
                     firstName: { type: "string" },
                     lastName: { type: "string" },
                     email: { type: "string" },
-                    amount: { type: "number" },
+                    amount: { type: "number", minimum: 1 },
                     description: { type: "string" },
                     items: { type: "array" },
                     successReturnUrl: { type: "string" },
@@ -89,56 +89,55 @@ const paymentRequest = (fastify, opts, next) => {
                 failureReturnUrl,
             } = request.body;
 
-            try {
-                if (amount <= 0) {
-                    return {
-                        status: 400,
-                        errorCode: "API_VALIDATION_ERROR",
-                        errorMessage:
-                            "Amount is required and must be greater than 0.",
-                    };
-                } else if (email == "") {
-                    return {
-                        status: 400,
-                        errorCode: "API_VALIDATION_ERROR",
-                        errorMessage: "Email is required.",
-                    };
-                }
-                let response =
-                    await paymentRequestController.createEWalletCharge({
-                        country: "PH",
-                        amount,
-                        referenceId,
-                        description,
-                        items,
-                        metadata: {
-                            skuId,
-                            customer: {
-                                customerId,
-                                firstName,
-                                lastName,
-                                email,
-                            },
+            // try {
+            // if (amount <= 0) {
+            //     return {
+            //         status: 400,
+            //         errorCode: "API_VALIDATION_ERROR",
+            //         errorMessage:
+            //             "Amount is required and must be greater than 0.",
+            //     };
+            // } else if (email == "") {
+            //     return {
+            //         status: 400,
+            //         errorCode: "API_VALIDATION_ERROR",
+            //         errorMessage: "Email is required.",
+            //     };
+            // }
+            let response = await paymentRequestController.createEWalletCharge({
+                country: "PH",
+                amount,
+                referenceId,
+                description,
+                items,
+                metadata: {
+                    skuId,
+                    customer: {
+                        customerId,
+                        firstName,
+                        lastName,
+                        email,
+                    },
+                },
+                paymentMethod: {
+                    ewallet: {
+                        channelProperties: {
+                            successReturnUrl,
+                            failureReturnUrl,
                         },
-                        paymentMethod: {
-                            ewallet: {
-                                channelProperties: {
-                                    successReturnUrl,
-                                    failureReturnUrl,
-                                },
-                                channelCode: "GCASH",
-                            },
-                            reusability: "ONE_TIME_USE",
-                            type: "EWALLET",
-                        },
-                        currency: "PHP",
-                    });
-                return response;
-            } catch (e) {
-                console.log(e);
-                return e;
-            }
-            return { error: true };
+                        channelCode: "GCASH",
+                    },
+                    reusability: "ONE_TIME_USE",
+                    type: "EWALLET",
+                },
+                currency: "PHP",
+            });
+            return response;
+            // } catch (e) {
+            //     console.log(e);
+            //     return e;
+            // }
+            // return { error: true };
         },
     });
 
@@ -187,6 +186,7 @@ const paymentRequest = (fastify, opts, next) => {
             // E.g. check authentication
         },
         handler: async (request, reply) => {
+            request.body.cardNumber;
             const { method } = request.params;
             const {
                 skuId,
@@ -205,91 +205,92 @@ const paymentRequest = (fastify, opts, next) => {
                 failureReturnUrl,
             } = request.body;
 
-            try {
-                if (amount <= 0) {
-                    return {
-                        status: 400,
-                        errorCode: "API_VALIDATION_ERROR",
-                        errorMessage:
-                            "Amount is required and must be greater than 0.",
-                    };
-                } else if (email == "") {
-                    return {
-                        status: 400,
-                        errorCode: "API_VALIDATION_ERROR",
-                        errorMessage: "Email is required.",
-                    };
-                } else if (cardNumber == "") {
-                    return {
-                        status: 400,
-                        errorCode: "API_VALIDATION_ERROR",
-                        errorMessage: "Card number is required.",
-                    };
-                } else if (cardholderName == "") {
-                    return {
-                        status: 400,
-                        errorCode: "API_VALIDATION_ERROR",
-                        errorMessage: "Card holder naame is required.",
-                    };
-                } else if (expiryMonth == "") {
-                    return {
-                        status: 400,
-                        errorCode: "API_VALIDATION_ERROR",
-                        errorMessage: "Expiry month is required.",
-                    };
-                } else if (expiryYear == "") {
-                    return {
-                        status: 400,
-                        errorCode: "API_VALIDATION_ERROR",
-                        errorMessage: "Expiry year is required.",
-                    };
-                } else if (cvv == "") {
-                    return {
-                        status: 400,
-                        errorCode: "API_VALIDATION_ERROR",
-                        errorMessage: "CVV is required.",
-                    };
-                }
-                let response = await paymentRequestController.createCardCharge({
-                    currency: "PHP",
-                    amount,
-                    referenceId,
-                    paymentMethod: {
-                        type: "CARD",
-                        card: {
-                            currency: "PHP",
-                            channelProperties: {
-                                successReturnUrl,
-                                failureReturnUrl,
-                            },
-                            cardInformation: {
-                                cardNumber,
-                                expiryMonth,
-                                expiryYear,
-                                cvv,
-                                cardholderName,
-                                country: "PH",
-                            },
-                        },
-                        reusability: "ONE_TIME_USE",
-                        description,
-                    },
-                    metadata: {
-                        skuId,
-                        customer: {
-                            customerId,
-                            cardholderName,
-                            email,
-                        },
-                    },
-                    items,
-                });
-                return response;
-            } catch (e) {
-                console.log(e);
-                return e;
+            // try {
+            //     if (amount <= 0) {
+            //         return {
+            //             status: 400,
+            //             errorCode: "API_VALIDATION_ERROR",
+            //             errorMessage:
+            //                 "Amount is required and must be greater than 0.",
+            //         };
+            //     } else if (email == "") {
+            //         return {
+            //             status: 400,
+            //             errorCode: "API_VALIDATION_ERROR",
+            //             errorMessage: "Email is required.",
+            //         };
+            //     } else if (cardNumber == "") {
+            //         return {
+            //             status: 400,
+            //             errorCode: "API_VALIDATION_ERROR",
+            //             errorMessage: "Card number is required.",
+            //         };
+            //     } else
+            // else if (expiryMonth == "") {
+            //         return {
+            //             status: 400,
+            //             errorCode: "API_VALIDATION_ERROR",
+            //             errorMessage: "Expiry month is required.",
+            //         };
+            //     } else if (expiryYear == "") {
+            //         return {
+            //             status: 400,
+            //             errorCode: "API_VALIDATION_ERROR",
+            //             errorMessage: "Expiry year is required.",
+            //         };
+            if (cardholderName == "") {
+                return {
+                    status: 400,
+                    errorCode: "API_VALIDATION_ERROR",
+                    errorMessage: "Card holder naame is required.",
+                };
+            } else if (cvv == "") {
+                return {
+                    status: 400,
+                    errorCode: "API_VALIDATION_ERROR",
+                    errorMessage: "CVV is required.",
+                };
             }
-            return { error: true };
+            let response = await paymentRequestController.createCardCharge({
+                currency: "PHP",
+                amount,
+                referenceId,
+                paymentMethod: {
+                    type: "CARD",
+                    card: {
+                        currency: "PHP",
+                        channelProperties: {
+                            successReturnUrl,
+                            failureReturnUrl,
+                        },
+                        cardInformation: {
+                            cardNumber,
+                            expiryMonth,
+                            expiryYear,
+                            cvv,
+                            cardholderName,
+                            country: "PH",
+                        },
+                    },
+                    reusability: "ONE_TIME_USE",
+                    description,
+                },
+                metadata: {
+                    skuId,
+                    customer: {
+                        customerId,
+                        cardholderName,
+                        email,
+                    },
+                },
+                items,
+            });
+            return response;
+            // } catch (e) {
+            //     console.log(e);
+            //     return e;
+            // }
+            // return { error: true };
         },
     });
 
